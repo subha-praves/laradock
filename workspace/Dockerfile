@@ -583,7 +583,7 @@ RUN if [ "${INSTALL_TAINT}" = true ]; then \
 ARG INSTALL_LIBPNG=false
 
 RUN if [ ${INSTALL_LIBPNG} = true ]; then \
-    apt-get -yqq install libpng16-16 \
+    apt-get -yqq install build-essential libpng16-16 libpng-dev\
 ;fi
 
 ###########################################################################
@@ -774,9 +774,16 @@ RUN if [ ${NPM_REGISTRY} ]; then \
     . ~/.bashrc && npm config set registry ${NPM_REGISTRY} \
 ;fi
 
+# change laradock ownership to .npm
+RUN if [ ${INSTALL_NODE} = true ]; then \
+  chown -R laradock:laradock /home/laradock/.npm \
+;fi
+
 # Mount .npmrc into home folder
 COPY ./.npmrc /root/.npmrc
 COPY ./.npmrc /home/laradock/.npmrc
+
+RUN chown -R laradock:laradock /home/laradock/.npmrc
 
 
 ###########################################################################
